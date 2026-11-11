@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI in de leerondersteuning — werkmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEDE1;
+    --paper-2:#FFFDF7;
+    --ink:#212B24;
+    --ink-soft:#4B564C;
+    --green:#2F5D50;
+    --green-dark:#1E3E35;
+    --teal:#6B9080;
+    --yellow:#F5C445;
+    --orange:#E8703A;
+    --line: rgba(33,43,36,0.14);
+    --radius: 4px;
+    --scale: 1;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%; font-size:calc(16px * var(--scale, 1));}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle, rgba(33,43,36,0.055) 1.1px, transparent 1.1px);
+    background-size: 16px 16px;
+    color:var(--ink);
+    font-family:'Atkinson Hyperlegible', sans-serif;
+    font-size:1.0625rem;
+    line-height:1.55;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  :focus-visible{outline:3px solid var(--orange); outline-offset:2px;}
+  button{font-family:inherit;}
+
+  /* ---------- header ---------- */
+  header.top{
+    background:var(--green-dark);
+    color:#F3F1E6;
+    padding:2.4rem 1.5rem 2.8rem;
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size:14px 14px;
+    pointer-events:none;
+  }
+  .top-inner{max-width:920px; margin:0 auto; position:relative; z-index:1;}
+  .top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1.4rem;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin:0 0 0.9rem;
+  }
+  header.top h1{
+    font-size:clamp(1.9rem, 4.4vw, 3rem);
+    line-height:1.08;
+    margin:0 0 0.9rem;
+    max-width:16ch;
+    color:#FBFAF3;
+  }
+  header.top h1 mark{
+    background:transparent;
+    color:inherit;
+    position:relative;
+    z-index:0;
+    white-space:nowrap;
+  }
+  header.top h1 mark::after{
+    content:"";
+    position:absolute; left:-2%; right:-2%; bottom:0.06em; height:0.36em;
+    background:var(--yellow);
+    z-index:-1;
+    transform:rotate(-0.6deg);
+  }
+  header.top p.lead{
+    max-width:52ch;
+    font-size:1.08rem;
+    color:#D9D6C4;
+    margin:0;
+  }
+  .back-btn{
+    display:none;
+    align-items:center;
+    gap:0.5rem;
+    background:none;
+    border:1.5px solid rgba(243,241,230,0.55);
+    color:#F3F1E6;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    letter-spacing:0.04em;
+    padding:0.5rem 0.9rem;
+    border-radius:100px;
+    cursor:pointer;
+  }
+  .back-btn:hover{border-color:var(--yellow); color:var(--yellow);}
+  .back-btn.visible{display:inline-flex;}
+
+  .text-size{
+    display:flex; align-items:center; gap:0.4rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:#D9D6C4;
+    flex:none;
+    margin-left:auto;
+  }
+  .text-size button{
+    width:2rem; height:2rem;
+    border-radius:100px;
+    border:1.5px solid rgba(243,241,230,0.4);
+    background:transparent;
+    color:#F3F1E6;
+    cursor:pointer;
+    font-size:0.9rem;
+    line-height:1;
+  }
+  .text-size button:hover{border-color:var(--yellow); color:var(--yellow);}
+
+  main{max-width:920px; margin:0 auto; padding:2.6rem 1.5rem 5rem;}
+
+  /* ---------- home grid ---------- */
+  #home-intro{margin: 0 0 1.6rem;}
+  #home-intro p{max-width:60ch; color:var(--ink-soft); font-size:1rem;}
+
+  .search-wrap{
+    display:flex; align-items:center; gap:0.6rem;
+    background:var(--paper-2);
+    border:1.5px solid var(--line);
+    border-radius:100px;
+    padding:0.6rem 1rem;
+    margin-bottom:1.8rem;
+    max-width:420px;
+  }
+  .search-wrap svg{flex:none; opacity:0.5;}
+  .search-wrap:focus-within{outline:3px solid var(--orange); outline-offset:2px;}
+  .search-wrap input{
+    border:none; background:none; outline:none;
+    font-family:'Atkinson Hyperlegible', sans-serif;
+    font-size:0.96rem;
+    color:var(--ink);
+    width:100%;
+  }
+  .no-results{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.88rem;
+    color:var(--ink-soft);
+    padding:1.4rem 0;
+    display:none;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:1rem;
+  }
+  .card-btn{
+    text-align:left;
+    background:var(--paper-2);
+    border:1.5px solid var(--line);
+    border-top:6px solid var(--tab-color, var(--green));
+    border-radius:var(--radius);
+    padding:1.3rem 1.2rem 1.4rem;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:0.6rem;
+    min-height:140px;
+    font-family:inherit;
+    color:var(--ink);
+    box-shadow:0 1px 0 rgba(33,43,36,0.04);
+    transition:transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+    position:relative;
+  }
+  .card-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 20px -12px rgba(33,43,36,0.35);
+  }
+  .card-btn.is-hidden{display:none;}
+  .card-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    letter-spacing:0.06em;
+  }
+  .card-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    font-size:1.18rem;
+    line-height:1.25;
+  }
+  .card-lead{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+  }
+  .card-arrow{
+    margin-top:auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    color:var(--green);
+    display:flex; align-items:center; gap:0.35rem;
+  }
+
+  /* ---------- saved prompts (home) ---------- */
+  #savedSection{margin-top:3rem; display:none;}
+  #savedSection.has-items{display:block;}
+  #savedSection h3{
+    font-size:1.05rem;
+    display:flex; align-items:center; gap:0.6rem;
+    margin:0 0 0.4rem;
+  }
+  #savedSection h3::before{
+    content:"";
+    width:10px; height:10px;
+    background:var(--orange);
+    border-radius:2px;
+    flex:none;
+  }
+  #savedSection .hint{color:var(--ink-soft); font-size:0.86rem; margin:0 0 1rem;}
+  .saved-card{
+    background:var(--green-dark);
+    color:#EFEDE1;
+    border-radius:var(--radius);
+    padding:1rem 1.2rem;
+    margin-bottom:0.8rem;
+  }
+  .saved-card .saved-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--yellow);
+    margin:0 0 0.5rem;
+  }
+  .saved-card p.saved-text{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    line-height:1.6;
+    white-space:pre-wrap;
+    margin:0 0 0.8rem;
+  }
+  .saved-actions{display:flex; gap:0.6rem;}
+
+  /* ---------- detail view ---------- */
+  #detail{display:none;}
+  #detail.visible{display:block;}
+  #home.hidden{display:none;}
+
+  .detail-head{margin-bottom:1.8rem;}
+  .detail-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    background:var(--tab-color, var(--green));
+    color:#FBFAF3;
+    padding:0.28rem 0.6rem;
+    border-radius:100px;
+    margin-bottom:0.9rem;
+  }
+  .detail-head h2{font-size:clamp(1.6rem, 3.6vw, 2.2rem); margin:0 0 0.6rem;}
+  .detail-head .lead{color:var(--ink-soft); max-width:60ch; margin:0;}
+
+  section.block{margin:2.4rem 0;}
+  section.block h3{
+    font-size:1.05rem;
+    display:flex; align-items:center; gap:0.6rem;
+    margin:0 0 1rem;
+  }
+  section.block h3::before{
+    content:"";
+    width:10px; height:10px;
+    background:var(--tab-color, var(--green));
+    border-radius:2px;
+    flex:none;
+  }
+  section.block .subhint{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin:-0.6rem 0 1rem;
+  }
+
+  ul.tips{list-style:none; margin:0; padding:0; display:grid; gap:0.7rem;}
+  ul.tips li{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:0.85rem 1rem;
+    font-size:0.96rem;
+    display:flex; gap:0.7rem;
+  }
+  ul.tips li::before{
+    content:"✓";
+    color:var(--green);
+    font-weight:700;
+    flex:none;
+  }
+
+  .prompt-card{
+    background:var(--green-dark);
+    color:#EFEDE1;
+    border-radius:var(--radius);
+    padding:1.1rem 1.2rem 1rem;
+    margin-bottom:0.9rem;
+    position:relative;
+  }
+  .prompt-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin:0 0 0.5rem;
+  }
+  .prompt-text{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.88rem;
+    line-height:1.6;
+    white-space:pre-wrap;
+    margin:0 0 0.9rem;
+    color:#F3F1E6;
+    border:1px dashed transparent;
+    border-radius:3px;
+    padding:0.3rem 0.4rem;
+    margin-left:-0.4rem;
+    margin-right:-0.4rem;
+  }
+  .prompt-text:focus{
+    border-color:rgba(245,196,69,0.6);
+    background:rgba(255,255,255,0.04);
+  }
+  .placeholder{
+    background:rgba(245,196,69,0.22);
+    border-bottom:2px solid var(--yellow);
+    color:#FBFAF3;
+    padding:0.02rem 0.2rem;
+    border-radius:2px;
+  }
+  .prompt-actions{display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;}
+  .copy-btn, .save-btn, .reset-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    border:none;
+    padding:0.42rem 0.8rem;
+    border-radius:100px;
+    cursor:pointer;
+    font-weight:500;
+  }
+  .copy-btn{background:var(--yellow); color:var(--green-dark);}
+  .copy-btn:hover{background:#FBDE86;}
+  .copy-btn.copied{background:var(--teal); color:var(--ink);}
+  .copy-btn.failed{background:#F3D2C4; color:var(--ink);}
+  .save-btn{background:transparent; color:#EFEDE1; border:1.5px solid rgba(239,237,225,0.4);}
+  .save-btn:hover{border-color:var(--orange); color:var(--orange);}
+  .save-btn.saved{border-color:#A9D1C0; color:#A9D1C0;}
+  .reset-btn{background:transparent; color:rgba(239,237,225,0.6); border:1.5px solid transparent; padding:0.42rem 0.4rem;}
+  .reset-btn:hover{color:#EFEDE1; text-decoration:underline;}
+
+  .fill-hint{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    margin:-0.6rem 0 1rem;
+  }
+
+  .privacy-note{
+    background:#FBF3DC;
+    border:1.5px solid var(--yellow);
+    border-radius:var(--radius);
+    padding:1rem 1.1rem;
+    font-size:0.92rem;
+    display:flex;
+    gap:0.7rem;
+    margin-top:2rem;
+  }
+  .privacy-note strong{font-family:'Fraunces', serif;}
+
+  footer{
+    max-width:920px; margin:0 auto; padding:0 1.5rem 3rem;
+    color:var(--ink-soft); font-size:0.85rem;
+  }
+
+  @media (max-width:600px){
+    header.top{padding:1.8rem 1.2rem 2.2rem;}
+    main{padding:2rem 1.2rem 4rem;}
+    .grid{grid-template-columns:1fr;}
+    .search-wrap{max-width:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card-btn{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="top-row">
+      <button class="back-btn" id="backBtn" onclick="showHome()">← Terug naar overzicht</button>
+      <div class="text-size" role="group" aria-label="Tekstgrootte aanpassen">
+        <span>Tekstgrootte</span>
+        <button onclick="changeFontSize(-1)" aria-label="Kleinere tekst">A−</button>
+        <button onclick="changeFontSize(1)" aria-label="Grotere tekst">A+</button>
+      </div>
+    </div>
+    <p class="eyebrow">Werkmap · leerondersteuning type 6</p>
+    <h1>AI als extra paar handen bij het begeleiden van je <mark>leerlingen</mark></h1>
+    <p class="lead">Concrete tips en kant-en-klare voorbeeldprompts voor leerondersteuners die leerlingen met een type 6-attest volgen in de lagere school. Vul aan, kopieer, en toets altijd zelf met je vakkennis.</p>
+  </div>
+</header>
+
+<main>
+
+  <div id="home">
+    <div id="home-intro">
+      <p>Kies hieronder een onderdeel van je werk, of zoek meteen op trefwoord. Bij elk onderdeel vind je tips en invulbare voorbeeldprompts.</p>
+    </div>
+
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" aria-label="Zoek in alle onderdelen" placeholder="Zoek op trefwoord, bv. 'braille' of 'ouders'…" oninput="filterCards()">
+    </div>
+    <p class="no-results" id="noResults">Niets gevonden. Probeer een ander trefwoord.</p>
+
+    <div class="grid" id="cardGrid"></div>
+
+    <div id="savedSection">
+      <h3>Mijn bewaarde prompts</h3>
+      <p class="hint">Enkel zichtbaar voor jou in deze werkmap — niet gedeeld met anderen.</p>
+      <div id="savedList"></div>
+    </div>
+  </div>
+
+  <div id="detail">
+    <div class="detail-head">
+      <span class="detail-tag" id="detailTag"></span>
+      <h2 id="detailTitle" tabindex="-1"></h2>
+      <p class="lead" id="detailLead"></p>
+    </div>
+
+    <section class="block">
+      <h3>Tips</h3>
+      <ul class="tips" id="tipsList"></ul>
+    </section>
+
+    <section class="block">
+      <h3>Voorbeeldprompts</h3>
+      <p class="fill-hint">Klik in een gemarkeerd woord en typ je eigen tekst — de rest van de prompt kan je ook vrij bewerken.</p>
+      <div id="promptList"></div>
+    </section>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Denk aan privacy:</strong> vervang namen, geboortedata en andere herkenbare gegevens altijd door bv. "leerling A" voordat je iets in een AI-tool plakt.</span>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Werkmap voor eigen gebruik — controleer AI-output altijd inhoudelijk. AI vervangt je vakkennis niet, het versnelt het schrijfwerk eromheen.
+</footer>
+
+<script>
+const DATA = [
+  {
+    tag: "Leersteunplan",
+    color: "#2F5D50",
+    title: "Een leersteunplan opstellen",
+    lead: "Van losse observaties en verslaggegevens naar een gestructureerd plan binnen de HGW-cirkel.",
+    tips: [
+      "Laat AI een eerste opzet maken vanuit ruwe gegevens, maar toets het resultaat altijd af bij het kind, de leerkracht en de ouders.",
+      "Geef context mee: leeftijd, aard van de visuele beperking, sterktes, aandachtspunten en klascontext — hoe specifieker, hoe bruikbaarder het resultaat.",
+      "Vraag expliciet om SMART-doelen binnen de HGW-cirkel (handelingsgericht werken).",
+      "Laat AI meerdere formuleringen voorstellen en kies zelf de beste — het is een klankbord, geen eindredacteur."
+    ],
+    prompts: [
+      "Ik ondersteun een leerling van [leeftijd] met [aard visuele beperking] in het [leerjaar]. Sterktes: [sterktes]. Aandachtspunten: [aandachtspunten]. Help me een leersteunplan opstellen met doelen op vlak van toegang tot leerstof, mobiliteit en sociaal-emotioneel functioneren. Werk met de HGW-cirkel en maak de doelen SMART.",
+      "Herschrijf deze losse notities over een leerling naar een gestructureerd leersteunplan met de kopjes 'sterktes', 'noden', 'doelen', 'acties leerkracht' en 'acties leerondersteuner':\n[plak hier je notities]",
+      "Geef me 5 concrete, haalbare acties die een klasleerkracht morgen al kan nemen om het bord en de leeromgeving toegankelijker te maken voor een leerling met laag zicht.",
+      "Ik bespreek dit leersteunplan met de ouders. Herschrijf onderstaande doelen in warme, toegankelijke taal zonder vakjargon:\n[plak hier je doelen]"
+    ]
+  },
+  {
+    tag: "Verslagen",
+    color: "#E8703A",
+    title: "Verslagen verduidelijken",
+    lead: "Moeilijke taal uit CLB- of medische verslagen omzetten naar begrijpelijke taal voor ouders of de leerling zelf.",
+    tips: [
+      "Verwijder namen en andere herkenbare gegevens uit de tekst vóór je die in een AI-tool plakt.",
+      "Vraag om vaktermen te láten staan, met een korte uitleg erbij — zo leren ouders ook de officiële woorden kennen.",
+      "Vraag altijd een taalniveau erbij (bv. B1) zodat het resultaat echt aansluit bij de lezer.",
+      "Laat je door AI ook een kindvriendelijke versie maken die je aan de leerling zelf kan voorlezen."
+    ],
+    prompts: [
+      "Herschrijf onderstaande paragraaf uit een CLB-verslag in eenvoudige taal (niveau B1), begrijpelijk voor ouders zonder medische achtergrond. Laat de vaktermen staan maar leg ze kort uit tussen haakjes.\nTekst: [plak hier]",
+      "Maak een lijst van de moeilijke woorden in deze tekst met een simpele uitleg per woord, geschikt om aan een kind van [leeftijd] uit te leggen:\n[plak hier]",
+      "Vat dit verslag samen in maximaal 10 zinnen, met de focus op wat het betekent voor de klaspraktijk:\n[plak hier]",
+      "Herschrijf deze uitleg over de diagnose als een tekst die ik aan de leerling zelf kan voorlezen: in ik-vorm, geruststellende toon, korte zinnen.\n[plak hier]"
+    ]
+  },
+  {
+    tag: "Observaties",
+    color: "#6B9080",
+    title: "Observaties en begeleidingen samenvatten",
+    lead: "Losse notities van begeleidingsmomenten bundelen tot een consistent, leesbaar dossier.",
+    tips: [
+      "Noteer losse observaties meteen na een begeleidingsmoment in trefwoorden — laat AI die nadien uitschrijven.",
+      "Werk met een vaste structuur (datum, context, observatie, interpretatie, vervolgstap) zodat je dossier consistent blijft over het jaar.",
+      "Gebruik AI om trends te herkennen over meerdere observatiemomenten heen — handig richting een evaluatiemoment.",
+      "Houd feiten en interpretatie apart: vraag AI expliciet om dat onderscheid te bewaren."
+    ],
+    prompts: [
+      "Ik geef je 5 korte observatienotities van begeleidingsmomenten met 'leerling A'. Bundel ze tot één samenvattend verslag met de kopjes 'context', 'observaties', 'interpretatie' en 'voorstel vervolgstappen'.\n[plak hier je notities]",
+      "Herschrijf deze losse steekwoorden over een begeleidingsmoment tot volle zinnen in professionele, objectieve verslagtaal — feiten, geen interpretatie:\n[plak hier]",
+      "Vergelijk deze observaties van [maand 1] en van [maand 2]. Welke evolutie zie je op vlak van zelfredzaamheid en werkhouding?\n[plak hier beide sets]",
+      "Maak van deze notities een kort mondeling overdrachtsverslagje van 5 zinnen voor het teamoverleg:\n[plak hier]"
+    ]
+  },
+  {
+    tag: "Lesmateriaal",
+    color: "#F5C445",
+    title: "Aangepast lesmateriaal maken",
+    lead: "Bestaande oefeningen herwerken naar een toegankelijke versie, zonder aan inhoud in te boeten.",
+    tips: [
+      "Vraag om oefeningen te herschalen: eenvoudigere zinsbouw, meer witruimte, duidelijk genummerde stappen.",
+      "Laat afbeeldingen of visuele opdrachten omzetten naar tekstuele of tastbare alternatieven.",
+      "Vraag altijd meerdere moeilijkheidsniveaus mee, zodat je meteen kan differentiëren binnen de klas.",
+      "Controleer het eindresultaat op vlak van lay-out zelf — AI beschrijft toegankelijkheid, maar maakt de opmaak niet automatisch groot of contrastrijk."
+    ],
+    prompts: [
+      "Herschrijf deze rekenoefening zodat ze geschikt is voor een leerling met laag zicht: korte zinnen, geen afbeeldingen nodig, duidelijke genummerde stappen, geschikt om groot en contrastrijk af te drukken.\n[plak hier de oefening]",
+      "Ik heb deze leesoefening. Maak een versie met eenvoudigere zinnen en meer witruimte tussen de regels, zonder de inhoud te verliezen.\n[plak hier de tekst]",
+      "Bedenk 3 alternatieve, niet-visuele manieren om het begrip '[bv. symmetrie]' uit te leggen aan een leerling die weinig ziet.",
+      "Zet deze opdracht met plaatjes om naar een opdracht die volledig met woorden en tastbare materialen werkt.\n[plak hier de opdracht]"
+    ]
+  },
+  {
+    tag: "Communicatie",
+    color: "#2F5D50",
+    title: "Communiceren met leerkrachten en ouders",
+    lead: "Korte, heldere boodschappen met de juiste toon voor elke doelgroep.",
+    tips: [
+      "Vraag AI om de toon af te stemmen: warm voor ouders, kort en praktisch voor leerkrachten, formeel voor directie.",
+      "Laat je conceptmail altijd korter maken — leerkrachten hebben weinig tijd, dus 3 concrete tips werken beter dan 10.",
+      "Gebruik AI om een gespreksagenda op te stellen zodat een oudergesprek gestructureerd blijft."
+    ],
+    prompts: [
+      "Schrijf een korte e-mail naar de klasleerkracht met 3 concrete tips die morgen al toepasbaar zijn voor een leerling met laag zicht. Toon: vriendelijk en collegiaal.",
+      "Stel een agenda op van 20 minuten voor een oudergesprek over de overgang naar het 1ste leerjaar, met aandacht voor hulpmiddelen en toegankelijkheid.",
+      "Herschrijf deze mail zodat ze korter en positiever klinkt, zonder de belangrijke informatie te verliezen:\n[plak hier je mail]"
+    ]
+  },
+  {
+    tag: "Evaluatie",
+    color: "#E8703A",
+    title: "Differentiatie en evaluatie aanpassen",
+    lead: "De vorm van een toets aanpassen — niet de inhoud of het niveau — binnen redelijke aanpassingen.",
+    tips: [
+      "Laat AI enkel de vórm aanpassen (lay-out, structuur, leesbaarheid) — inhoud en niveau blijven jouw beslissing.",
+      "Vraag een scoringskader op dat expliciet rekening houdt met redelijke aanpassingen voor een type 6-attest.",
+      "Vraag ook een voorleesversie of audio-vriendelijke structuur mee, zodat je meteen twee varianten hebt."
+    ],
+    prompts: [
+      "Pas de vorm van deze toets aan voor een leerling met laag zicht: geen afbeeldingen, genummerde stappen, ruimte voor audio-ondersteuning. Behoud de inhoud en het niveau.\n[plak hier de toets]",
+      "Stel een eenvoudig scoringskader op voor deze opdracht, met aandacht voor redelijke aanpassingen voor een leerling met een type 6-attest.\n[plak hier de opdracht]",
+      "Maak een voorleesvriendelijke versie van deze toets: korte zinnen per vraag, duidelijke nummering, geen dubbele ontkenningen.\n[plak hier de toets]"
+    ]
+  },
+  {
+    tag: "Brainstorm",
+    color: "#6B9080",
+    title: "Brainstormen over aanpak en hulpmiddelen",
+    lead: "AI als sparringpartner gebruiken wanneer je vastloopt — jij kiest en verfijnt vanuit je vakkennis.",
+    tips: [
+      "Vraag concrete, schoolse voorbeelden in plaats van algemene principes — dat levert bruikbaardere ideeën op.",
+      "Gebruik AI om zelf kritische vragen te laten stellen bij je eigen aanpak, in plaats van enkel bevestiging te zoeken.",
+      "Vraag naar zowel low-tech als tech-hulpmiddelen, zodat je een haalbare mix kan voorstellen aan de school."
+    ],
+    prompts: [
+      "Geef me 5 low-tech hulpmiddelen en 5 tech-hulpmiddelen voor een leerling met laag zicht in het 4de leerjaar, met een korte uitleg per hulpmiddel.",
+      "Ik loop vast bij het motiveren van een leerling om braille te oefenen. Geef me 3 speelse werkvormen die passen bij een kind van [leeftijd].",
+      "Welke vragen kan ik aan de klasleerkracht stellen om beter zicht te krijgen op de noden van de leerling in de klas?"
+    ]
+  },
+  {
+    tag: "Veilig gebruik",
+    color: "#F5C445",
+    title: "Slim en veilig omgaan met AI",
+    lead: "Privacy, kritisch nadenken en je eigen promptbibliotheek opbouwen.",
+    tips: [
+      "Gebruik nooit namen, geboortedata of rijksregisternummers in een publieke AI-chat — werk met 'leerling A' of anonimiseer eerst.",
+      "Controleer AI-output altijd inhoudelijk: AI kan foute of verzonnen informatie geven.",
+      "Vraag AI bewust om tegen te spreken: 'waar zie je risico's in dit plan?' levert vaak meer op dan alleen bevestiging vragen.",
+      "Bewaar prompts die voor jou goed werken in je eigen bibliotheek — dat kan nu rechtstreeks in deze werkmap."
+    ],
+    prompts: [
+      "Herformuleer deze tekst met 'leerling A' in plaats van de echte naam en ga na of er nog andere herkenbare informatie in staat.\n[plak hier]",
+      "Speel advocaat van de duivel: welke zwakke punten zie je in dit leersteunplan?\n[plak hier je plan]",
+      "Leg in gewone taal uit wat het verschil is tussen een type 6-attest en een individueel aangepast curriculum (IAC), zodat ik dit aan een nieuwe leerkracht kan uitleggen."
+    ]
+  }
+];
+
+/* ---------- storage helpers (met in-memory fallback) ---------- */
+let memoryFallback = { 'ui-font-step': 0, 'saved-prompts': [] };
+let storageAvailable = !!(window.storage && window.storage.get && window.storage.set);
+
+async function storageGet(key, fallback){
+  if(!storageAvailable) return memoryFallback[key] ?? fallback;
+  try{
+    const r = await window.storage.get(key, false);
+    return r ? JSON.parse(r.value) : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+async function storageSet(key, value){
+  memoryFallback[key] = value;
+  if(!storageAvailable) return;
+  try{ await window.storage.set(key, JSON.stringify(value), false); }catch(e){ /* stil falen, in-memory blijft geldig */ }
+}
+
+/* ---------- algemene hulpfuncties ---------- */
+function prefersReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function scrollToTop(){
+  window.scrollTo({ top:0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+}
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function highlightPlaceholders(str){
+  return escapeHtml(str).replace(/\[([^\]]+)\]/g, '<span class="placeholder">$1</span>');
+}
+/* kiest donkere of lichte tekst, afhankelijk van welke het best leesbaar is op de achtergrondkleur */
+function contrastText(hex){
+  const n = parseInt(hex.slice(1), 16);
+  const lin = c => { c /= 255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+  const L = 0.2126*lin((n>>16)&255) + 0.7152*lin((n>>8)&255) + 0.0722*lin(n&255);
+  const dark = '#212B24', light = '#FBFAF3';
+  const Ldark = 0.0217, Llight = 0.95;
+  return (L+0.05)/(Ldark+0.05) >= (Llight+0.05)/(L+0.05) ? dark : light;
+}
+
+/* ---------- tekstgrootte ---------- */
+let fontStep = 0;
+async function initFontSize(){
+  const stored = await storageGet('ui-font-step', 0);
+  fontStep = Math.max(-2, Math.min(4, Number(stored) || 0));
+  applyFontSize();
+}
+function applyFontSize(){
+  const base = 17 + fontStep * 2;                      /* 13px t.e.m. 25px */
+  document.documentElement.style.setProperty('--scale', String(base / 17));
+}
+function changeFontSize(delta){
+  fontStep = Math.max(-2, Math.min(4, fontStep + delta));
+  applyFontSize();
+  storageSet('ui-font-step', fontStep);
+}
+
+/* ---------- home grid ---------- */
+const grid = document.getElementById('cardGrid');
+DATA.forEach((item, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'card-btn';
+  btn.dataset.index = i;
+  btn.style.setProperty('--tab-color', item.color);
+  btn.dataset.haystack = (item.tag + ' ' + item.title + ' ' + item.lead + ' ' + item.tips.join(' ') + ' ' + item.prompts.join(' ')).toLowerCase();
+  btn.onclick = () => showDetail(i);
+  btn.innerHTML = `
+    <span class="card-num">${String(i+1).padStart(2,'0')} · ${item.tag}</span>
+    <span class="card-title">${item.title}</span>
+    <span class="card-lead">${item.lead}</span>
+    <span class="card-arrow">Bekijk tips &amp; prompts →</span>
+  `;
+  grid.appendChild(btn);
+});
+
+function filterCards(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  let visibleCount = 0;
+  document.querySelectorAll('.card-btn').forEach(btn => {
+    const match = !q || btn.dataset.haystack.includes(q);
+    btn.classList.toggle('is-hidden', !match);
+    if(match) visibleCount++;
+  });
+  document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+/* ---------- detail view ---------- */
+let lastCardIndex = null;
+
+function showDetail(i){
+  lastCardIndex = i;
+  const item = DATA[i];
+
+  const tag = document.getElementById('detailTag');
+  tag.textContent = item.tag;
+  tag.style.background = item.color;
+  tag.style.color = contrastText(item.color);
+  document.getElementById('detailTitle').textContent = item.title;
+  document.getElementById('detailLead').textContent = item.lead;
+
+  const tipsList = document.getElementById('tipsList');
+  tipsList.innerHTML = item.tips.map(t => `<li>${t}</li>`).join('');
+
+  const promptList = document.getElementById('promptList');
+  promptList.innerHTML = item.prompts.map((p, idx) => `
+    <div class="prompt-card">
+      <p class="prompt-label">Prompt ${idx+1}</p>
+      <div class="prompt-text" contenteditable="true" spellcheck="false" data-original="${encodeURIComponent(p)}">${highlightPlaceholders(p)}</div>
+      <div class="prompt-actions">
+        <button class="copy-btn" onclick="copyPromptEl(this)">Kopieer prompt</button>
+        <button class="save-btn" onclick="savePromptEl(this, ${i})">Bewaar in mijn bibliotheek</button>
+        <button class="reset-btn" onclick="resetPromptEl(this)">Herstel origineel</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.block h3').forEach(h => h.style.setProperty('--tab-color', item.color));
+
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('detail').classList.add('visible');
+  document.getElementById('backBtn').classList.add('visible');
+  scrollToTop();
+  document.getElementById('detailTitle').focus({ preventScroll:true });
+}
+
+function showHome(){
+  document.getElementById('home').classList.remove('hidden');
+  document.getElementById('detail').classList.remove('visible');
+  document.getElementById('backBtn').classList.remove('visible');
+  scrollToTop();
+  if(lastCardIndex !== null){
+    const b = document.querySelector('.card-btn[data-index="' + lastCardIndex + '"]');
+    if(b) b.focus({ preventScroll:true });
+  }
+}
+
+/* ---------- feedback op knoppen ---------- */
+function flashButton(btn, tempLabel, tempClass){
+  if(btn.dataset.label === undefined) btn.dataset.label = btn.textContent;   /* originele label onthouden */
+  clearTimeout(btn._flashTimer);
+  btn.classList.remove('copied', 'failed', 'saved');
+  btn.textContent = tempLabel;
+  if(tempClass) btn.classList.add(tempClass);
+  btn._flashTimer = setTimeout(() => {
+    btn.textContent = btn.dataset.label;
+    btn.classList.remove('copied', 'failed', 'saved');
+  }, 1800);
+}
+
+/* ---------- kopiëren ---------- */
+function legacyCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+function copyToClipboard(text, onSuccess, onFail){
+  const legacy = () => { legacyCopy(text) ? onSuccess() : onFail(); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(onSuccess).catch(legacy);
+  } else {
+    legacy();
+  }
+}
+function copyWithFeedback(btn, text){
+  copyToClipboard(
+    text,
+    () => flashButton(btn, 'Gekopieerd ✓', 'copied'),
+    () => flashButton(btn, 'Niet gelukt — kopieer handmatig', 'failed')
+  );
+}
+
+function copyPromptEl(btn){
+  const text = btn.closest('.prompt-card').querySelector('.prompt-text').innerText;
+  copyWithFeedback(btn, text);
+}
+
+function resetPromptEl(btn){
+  const el = btn.closest('.prompt-card').querySelector('.prompt-text');
+  el.innerHTML = highlightPlaceholders(decodeURIComponent(el.dataset.original));
+}
+
+/* ---------- bewaarde prompts ---------- */
+let savedPrompts = [];
+
+async function initSaved(){
+  const stored = await storageGet('saved-prompts', []);
+  savedPrompts = Array.isArray(stored) ? stored : [];
+  renderSavedPrompts();
+}
+
+async function savePromptEl(btn, itemIndex){
+  if(btn.classList.contains('saved')) return;          /* voorkomt dubbele opslag bij dubbelklik */
+  const item = DATA[itemIndex];
+  const text = btn.closest('.prompt-card').querySelector('.prompt-text').innerText;
+  savedPrompts.unshift({ tag: item.tag, title: item.title, text: text, savedAt: new Date().toISOString() });
+  flashButton(btn, 'Bewaard ✓', 'saved');
+  renderSavedPrompts();
+  await storageSet('saved-prompts', savedPrompts);
+}
+
+async function deleteSavedPrompt(idx){
+  savedPrompts.splice(idx, 1);
+  renderSavedPrompts();
+  await storageSet('saved-prompts', savedPrompts);
+}
+
+function handleCopySaved(btn, idx){
+  const item = savedPrompts[idx];
+  if(!item) return;
+  copyWithFeedback(btn, item.text);                    /* synchroon, binnen het klik-event */
+}
+
+function renderSavedPrompts(){
+  const section = document.getElementById('savedSection');
+  const container = document.getElementById('savedList');
+  if(!savedPrompts.length){
+    section.classList.remove('has-items');
+    container.innerHTML = '';
+    return;
+  }
+  section.classList.add('has-items');
+  container.innerHTML = savedPrompts.map((p, idx) => `
+    <div class="saved-card">
+      <p class="saved-meta">${escapeHtml(p.tag)} · ${escapeHtml(p.title)}</p>
+      <p class="saved-text">${escapeHtml(p.text)}</p>
+      <div class="saved-actions">
+        <button class="copy-btn" onclick="handleCopySaved(this, ${idx})">Kopieer</button>
+        <button class="reset-btn" onclick="deleteSavedPrompt(${idx})">Verwijderen</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- bewerken van prompts: plakken en klikken op invulwoorden ---------- */
+const promptListEl = document.getElementById('promptList');
+
+/* plakken als gewone tekst, zodat opmaak uit Word/e-mail de kaart niet verknoeit */
+promptListEl.addEventListener('paste', e => {
+  if(!(e.target.closest && e.target.closest('.prompt-text'))) return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, text);
+});
+
+/* klik op een gemarkeerd woord selecteert het volledig, zodat je het meteen kan overtypen */
+promptListEl.addEventListener('click', e => {
+  const ph = e.target.closest && e.target.closest('.placeholder');
+  if(!ph) return;
+  const sel = window.getSelection();
+  if(!sel.isCollapsed) return;
+  const range = document.createRange();
+  range.selectNodeContents(ph);
+  sel.removeAllRanges();
+  sel.addRange(range);
+});
+
+/* ---------- init ---------- */
+initFontSize();
+initSaved();
+</script>
+</body>
+</html>
